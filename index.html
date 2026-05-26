@@ -65,11 +65,18 @@ select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);bo
 .lesson summary{cursor:pointer;font-weight:600;color:var(--accent);padding:8px 0}
 .lesson{border-bottom:1px solid var(--line)}
 .eng-status{font-size:12px;color:var(--muted)}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#5b8def,#3f6fd6);color:#fff;font-size:26px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#cloud-btn{background:#fff;color:#1a1f26;font-weight:600;display:inline-flex;align-items:center;gap:7px}
 </style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20rx%3D%2722%27%20width%3D%27100%27%20height%3D%27100%27%20fill%3D%27%235b8def%27/%3E%3Ctext%20x%3D%2750%27%20y%3D%2776%27%20font-size%3D%2768%27%20text-anchor%3D%27middle%27%20fill%3D%27white%27%3E%26%239822%3B%3C/text%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <header>
-  <h1>♞ מאמן השחמט</h1>
+  <span class="logo">♞</span>
+  <h1>מאמן השחמט</h1>
   <span class="who">מותאם אישית ל‑meirco1997 · נבנה לפי ניתוח 1,053 המשחקים שלך</span>
 </header>
 <nav id="nav"></nav>
@@ -101,7 +108,7 @@ select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);bo
         <div class="stat"><div class="n" id="pg-wins">0</div><div class="l">ניצחונות מול המנוע</div></div>
         <div class="stat"><div class="n" id="pg-lessons">0</div><div class="l">שיעורים שנקראו</div></div>
       </div>
-      <p class="small muted" style="margin-top:10px">ההתקדמות נשמרת בדפדפן שלך (localStorage). <button class="btn sec small" onclick="resetProgress()">איפוס</button></p>
+      <div id="cloud-box" style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button class="btn" id="cloud-btn" onclick="Cloud.toggle()">כניסה עם Google</button><span class="small muted" id="cloud-status">טוען…</span></div><p class="small muted" style="margin-top:10px">ההתקדמות נשמרת בדפדפן, ובענן כשאתה מחובר. <button class="btn sec small" onclick="resetProgress()">איפוס מקומי</button></p>
     </div>
     <div class="card">
       <h3>איך מתחילים</h3>
@@ -260,7 +267,7 @@ var Chess=function(r){var e="b",n="w",t=-1,o="p",i="b",f="k",u="rnbqkbnr/ppppppp
 var GLYPH={w:{k:'♔',q:'♕',r:'♖',b:'♗',n:'♘',p:'♙'},b:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'}};
 function $(id){return document.getElementById(id);}
 function loadPG(){try{return JSON.parse(localStorage.getItem('mc_chess')||'{}');}catch(e){return(window._pg||{});}}
-function savePG(p){window._pg=p;try{localStorage.setItem('mc_chess',JSON.stringify(p));}catch(e){}}
+function savePG(p){window._pg=p;try{localStorage.setItem('mc_chess',JSON.stringify(p));}catch(e){}try{if(window.Cloud&&Cloud.push)Cloud.push();}catch(e){}}
 function bump(k,by){var p=loadPG();p[k]=(p[k]||0)+(by||1);savePG(p);renderProgress();}
 function renderProgress(){var p=loadPG();
   $('pg-puzzles').textContent=p.puzzles||0;$('pg-games').textContent=p.games||0;
@@ -500,7 +507,7 @@ var An=(function(){
 })();
 
 /* ============ PUZZLES ============ */
-var PUZZLES=/*p*/[{"id": 1, "theme": "מט בטור האחורי", "level": "מט ב-1", "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "line": ["a1a8"], "hint": "החיילים של היריב כולאים את המלך שלו. נצל את הטור הפתוח.", "color": "w"}, {"id": 2, "theme": "מט בטור האחורי", "level": "מט ב-1", "fen": "4r1k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1", "line": ["e1e8"], "hint": "מהלך אחד מסיים. הצריח השחור לא יכול לעזור.", "color": "w"}, {"id": 3, "theme": "מט צריח + מלך", "level": "מט ב-1", "fen": "7k/8/6K1/8/8/8/R7/8 w - - 0 1", "line": ["a2a8"], "hint": "המלך הלבן שולט במשבצות הבריחה. הצריח נותן מט.", "color": "w"}, {"id": 4, "theme": "מט הסולם (שני צריחים)", "level": "מט ב-2", "fen": "7k/8/8/8/8/8/R7/1R5K w - - 0 1", "line": ["a2a7", "h8g8", "b1b8"], "hint": "חתוך את הטור השביעי, דחוף את המלך אחורה, ואז מט בטור השמיני.", "color": "w"}, {"id": 5, "theme": "מזלג פרש מלכותי", "level": "זכייה במלכה", "fen": "6k1/8/8/3q4/4N3/8/8/6K1 w - - 0 1", "line": ["e4f6"], "hint": "שח! ומאיים בו-זמנית על המלכה. אחרי שהמלך יזוז — הפרש אוכל את המלכה.", "color": "w", "solveMsg": "הפרש אוכל את המלכה במהלך הבא — יתרון מכריע."}];
+var PUZZLES=/*p*/[{"id": 1, "theme": "מט בטור האחורי (צריח)", "level": "מט ב-1", "color": "w", "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "line": ["a1a8"], "hint": "החיילים כולאים את המלך. נצל את הטור הפתוח."}, {"id": 2, "theme": "מט בטור האחורי (אכילה)", "level": "מט ב-1", "color": "w", "fen": "4r1k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1", "line": ["e1e8"], "hint": "הצריח השחור לא מציל. מהלך אחד מסיים."}, {"id": 3, "theme": "מט מלכה בטור האחורי", "level": "מט ב-1", "color": "w", "fen": "6k1/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1", "line": ["d1d8"], "hint": "המלכה חודרת לטור השמיני."}, {"id": 4, "theme": "מט שני צריחים (סולם)", "level": "מט ב-1", "color": "w", "fen": "7k/8/8/8/8/8/6R1/6RK w - - 0 1", "line": ["g2h2"], "hint": "צריח אחד שולט בטור, השני נותן שח מכריע."}, {"id": 5, "theme": "מט צריח + מלך", "level": "מט ב-1", "color": "w", "fen": "7k/8/6K1/8/8/8/R7/8 w - - 0 1", "line": ["a2a8"], "hint": "המלך שומר על משבצות הבריחה."}, {"id": 6, "theme": "מט הסולם (מט ב-2)", "level": "מט ב-2", "color": "w", "fen": "7k/8/8/8/8/8/R7/1R5K w - - 0 1", "hint": "חתוך את הטור השביעי, דחוף את המלך, ואז מט.", "line": ["a2a7", "h8g8", "b1b8"]}, {"id": 7, "theme": "סולם הפוך (מט ב-2)", "level": "מט ב-2", "color": "w", "fen": "7k/8/8/8/8/8/1R6/R6K w - - 0 1", "hint": "אותו רעיון מהצד השני — חתוך, דחוף, מט.", "line": ["b2b7", "h8g8", "a1a8"]}, {"id": 8, "theme": "מזלג פרש מלכותי", "level": "זכייה במלכה", "color": "w", "fen": "6k1/8/8/3q4/4N3/8/8/6K1 w - - 0 1", "line": ["e4f6"], "hint": "שח + איום על המלכה. אחרי שהמלך זז — הפרש אוכל.", "solveMsg": "הפרש אוכל את המלכה בתור הבא — יתרון מכריע."}, {"id": 9, "theme": "מזלג פרש מלכותי", "level": "זכייה במלכה", "color": "w", "fen": "6k1/3q4/8/8/4N3/8/8/6K1 w - - 0 1", "line": ["e4f6"], "hint": "מהלך פרש שנותן שח ותוקף את המלכה בו-זמנית.", "solveMsg": "הפרש אוכל את המלכה בתור הבא."}, {"id": 10, "theme": "מזלג פרש (זכייה בצריח)", "level": "זכייה בצריח", "color": "w", "fen": "2r1k3/8/8/5N2/8/8/8/6K1 w - - 0 1", "line": ["f5d6"], "hint": "שח למלך ומזלג על הצריח. אחרי שהמלך זז — אכול את הצריח.", "solveMsg": "הפרש זוכה בצריח — יתרון חומר."}];
 var Pz=(function(){
   var board,inited=false,idx=0,step=0,solved=false;
   function cur(){return PUZZLES[idx];}
@@ -625,8 +632,35 @@ var Le=(function(){var inited=false;return{init:function(){if(inited)return;init
   c.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open&&!d._r){d._r=1;bump('lessons');}});});
 }};})();
 
+
+/* ============ CLOUD SYNC (Firebase + Google) ============ */
+var FIREBASE_CONFIG = {"apiKey":"__FIREBASE_API_KEY__","authDomain":"","projectId":""};
+var Cloud=(function(){
+  var auth=null,db=null,uid=null,ready=false;
+  function configured(){return FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey&&FIREBASE_CONFIG.apiKey.indexOf('__')!==0;}
+  function setUI(user){var st=$('cloud-status'),btn=$('cloud-btn');if(!st||!btn)return;
+    if(!configured()){st.textContent='סנכרון הענן עדיין לא הוגדר (בהקמה).';btn.style.display='none';return;}
+    btn.style.display='inline-flex';
+    if(user){st.innerHTML='מסונכרן בענן כ‑<b>'+(user.displayName||user.email||'משתמש')+'</b> ✔';btn.textContent='התנתק';}
+    else{st.textContent='התחבר כדי לשמור את ההתקדמות בענן ולגשת מכל מכשיר.';btn.innerHTML='<span>🔑</span> כניסה עם Google';}}
+  function mergeMax(a,b){var o=Object.assign({},a);['puzzles','games','wins','lessons'].forEach(function(k){o[k]=Math.max((a&&a[k])||0,(b&&b[k])||0);});return o;}
+  function pull(){if(!uid||!db)return;db.collection('users').doc(uid).get().then(function(d){
+    var cloud=d.exists?d.data():{};var merged=mergeMax(loadPG(),cloud);savePG(merged);renderProgress();push();}).catch(function(){});}
+  function push(){if(!uid||!db)return;try{db.collection('users').doc(uid).set(loadPG(),{merge:true});}catch(e){}}
+  return{
+    init:function(){setUI(null);if(!configured())return;
+      try{firebase.initializeApp(FIREBASE_CONFIG);auth=firebase.auth();db=firebase.firestore();ready=true;
+        auth.onAuthStateChanged(function(user){uid=user?user.uid:null;setUI(user);if(user)pull();});}
+      catch(e){ready=false;setUI(null);}},
+    toggle:function(){if(!ready){alert('סנכרון הענן עדיין לא הוגדר. עקוב אחרי הוראות ההקמה של Firebase.');return;}
+      if(uid){auth.signOut();}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function(e){alert('כניסה נכשלה: '+(e&&e.message||e));});}},
+    push:push
+  };
+})();
+
 /* ============ boot ============ */
 renderProgress();
+Cloud.init();
 </script>
 </body>
 </html>
