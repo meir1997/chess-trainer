@@ -8,11 +8,11 @@
   document.getElementById('undo').after(hintButton);
 
   const clearHint=()=>{hintMove=null;hintStep=0};
+  const syncHintButton=()=>{hintButton.disabled=hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor)};
   const normalRender=render;
   render=()=>{
     normalRender();
-    const unavailable=hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor);
-    hintButton.disabled=unavailable;
+    syncHintButton();
     if(!hintMove)return;
     const from=hintMove.slice(0,2),to=hintMove.slice(2,4);
     const fromButton=[...board.children].find(b=>b.getAttribute('aria-label')?.startsWith(from));
@@ -38,7 +38,7 @@
   }
 
   hintButton.onclick=async()=>{
-    if(hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor))return;
+    if(hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor)){document.getElementById('status').textContent='הרמז זמין כשהתור שלך.';return}
     if(hintMove&&hintStep===1){hintStep=2;render();document.getElementById('status').textContent='רמז מלא: הכלי והמשבצת המסומנים יוצרים את המהלך המומלץ.';return}
     hintBusy=true;render();document.getElementById('status').textContent='Stockfish מחשב את המהלך הטוב ביותר…';let message='';
     try{
@@ -49,5 +49,6 @@
       message='לא הצלחתי לחשב רמז כרגע. נסה שוב בעוד רגע.';
     }finally{hintBusy=false;render();document.getElementById('status').textContent=message}
   };
-  render();
+  new MutationObserver(syncHintButton).observe(board,{childList:true});
+  syncHintButton();
 })();
