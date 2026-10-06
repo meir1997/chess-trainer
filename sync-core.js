@@ -2,7 +2,7 @@
    Historical error/reveal counters use maxima, not sums across devices. */
 (function(root){
  function mergeProgress(a={},b={}){
-  const result={...(a.updatedAt>b.updatedAt?a:b),records:{}};
+  const result={tier:0,streak:0,errorStreak:0,...(a.updatedAt>b.updatedAt?a:b),records:{}};
   for(const id of new Set([...Object.keys(a.records||{}),...Object.keys(b.records||{})])){
    const x=a.records?.[id]||{},y=b.records?.[id]||{};
    result.records[id]={...x,...y};
