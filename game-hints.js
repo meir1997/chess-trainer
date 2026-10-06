@@ -49,4 +49,5 @@
       message='לא הצלחתי לחשב רמז כרגע. נסה שוב בעוד רגע.';
     }finally{hintBusy=false;render();document.getElementById('status').textContent=message}
   };
+  render();
 })();
