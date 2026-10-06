@@ -7,7 +7,7 @@ html,body{width:100%;height:100%;overflow:hidden}
 #puzzleViewport header nav{margin:0}
 #puzzleViewport main{grid-template-columns:minmax(0,1fr) 330px;padding:0 18px 12px;gap:20px}
 #puzzleViewport .game{width:100%;max-width:540px;align-self:start}
-#puzzleViewport aside{max-height:none;overflow:visible;padding:16px}
+#puzzleViewport main{height:702px;align-items:start}#puzzleViewport aside{height:690px;max-height:none;overflow:hidden;padding:16px}#puzzleSidebarContent{transform-origin:top right}
 #puzzleViewport .filters{gap:6px}
 #puzzleViewport select,#puzzleViewport button{min-height:36px;padding:6px 10px;font-size:14px}
 #puzzleViewport .feedback{margin:10px 0;min-height:48px;padding:10px;font-size:14px}
@@ -3406,9 +3406,13 @@ $('reveal').onclick=()=>{if(!current||finished)return;finished=true;hintSquare=n
  const page=document.createElement('div');page.id='puzzleViewport';
  for(const node of [...document.body.children])if(node.tagName!=='SCRIPT')page.append(node);
  document.body.prepend(page);
+ const sidebar=page.querySelector('aside'),content=document.createElement('div');content.id='puzzleSidebarContent';
+ while(sidebar.firstChild)content.append(sidebar.firstChild);sidebar.append(content);
+ function fitSidebar(){const scale=Math.min(1,(sidebar.clientHeight-32)/content.scrollHeight);content.style.transform='scale('+scale+')'}
+ new ResizeObserver(fitSidebar).observe(content);
  let frame;function fit(){cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{
   const width=Math.min(1000,Math.max(900,window.innerWidth));page.style.width=width+'px';
-  const height=page.scrollHeight,scale=Math.min(1,(window.innerWidth-12)/width,(window.innerHeight-12)/height);
+  fitSidebar();const height=page.scrollHeight,scale=Math.min(1,(window.innerWidth-12)/width,(window.innerHeight-12)/height);
   page.style.transform='scale('+scale+')';page.style.left=Math.max(6,(window.innerWidth-width*scale)/2)+'px';page.style.top='6px';
  })}
  new ResizeObserver(fit).observe(page);new MutationObserver(fit).observe(page,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden']});
