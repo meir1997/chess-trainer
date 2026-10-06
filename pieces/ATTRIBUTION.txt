@@ -1,0 +1,1 @@
+Chess pieces by Cburnett, from Wikimedia Commons via lichess-org/lila public/piece/cburnett. Licensed under CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/). Modifications: black fill changed to charcoal gray. Original SVG source: https://github.com/lichess-org/lila/tree/master/public/piece/cburnett

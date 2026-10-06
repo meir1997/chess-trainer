@@ -1,0 +1,1 @@
+Stockfish.js 10.0.2 by Nathan Rugg / Stockfish authors. Unmodified stockfish.asm.js from npm stockfish@10.0.2 is embedded as a local worker. Source: https://github.com/nmrugg/stockfish.js (version 10.0.2); package: https://unpkg.com/stockfish@10.0.2/ . GNU GPLv3.
