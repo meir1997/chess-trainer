@@ -4,7 +4,7 @@
  const status=document.createElement('span'),login=document.createElement('button'),restore=document.createElement('button');
  login.textContent='כניסה עם Google';restore.textContent='טעינת המשחק מהענן';restore.hidden=true;
  for(const button of [login,restore])button.style.cssText='background:#58753d;color:white;border:0;border-radius:7px;padding:8px 12px;cursor:pointer;min-height:36px';
- status.setAttribute('aria-live','polite');bar.append(login,status,restore);const header=document.querySelector('header');if(header)header.after(bar);else (document.querySelector('main')||document.body).prepend(bar);
+ status.setAttribute('aria-live','polite');bar.append(login,status,restore);const header=document.querySelector('header');if(header)header.after(bar);else if(document.querySelector('aside')){document.querySelector('aside').prepend(bar);bar.style.padding='0';bar.style.marginBottom='16px'}else (document.querySelector('main')||document.body).prepend(bar);
  let auth,db,ref,stop,timer,cloud={},ready=false,applying=false,dirty=false,session=0,revision=0;
  const key='personal-puzzles-v1',gameKey='chess-cloud-game-v1';
  function read(k,fallback={}){try{return JSON.parse(localStorage.getItem(k))||fallback}catch{return fallback}}
