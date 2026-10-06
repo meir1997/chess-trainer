@@ -21,25 +21,148 @@ html,body{width:100%;height:100%;overflow:hidden}
 #puzzleViewport .stats b{font-size:20px}
 #puzzleViewport .source{font-size:12px;margin:8px 0;padding-top:8px}
 #puzzleViewport .note{font-size:12px;line-height:1.5;margin:8px 0}
+#continuePanel{margin-top:10px;padding:10px;border-radius:8px;background:#263120}#continuePanel label{display:block;margin-bottom:6px}#continuePanel select{width:100%;margin-bottom:7px}#continuePanel button{width:100%;background:#7fa44d;color:white;font-weight:700}#continueStatus{font-size:12px;margin:7px 0 0;color:#d5e5bf}
 #puzzleViewport details{margin-top:8px}
 #puzzleViewport .coord{font-size:17px}
-</style><header><div><h1>חידות מתוך המשחקים שלך</h1><small id="total"></small></div><nav><a href="chess.html">משחק</a> · <a href="insights.html">דוח שיפור</a></nav></header><main><section class="game"><div class="bar"><b id="turn"></b><span class="chip" id="topic"></span></div><div id="board" aria-label="לוח חידת שחמט"></div><div class="bar"><span id="number"></span><span id="hardness"></span></div><div class="progress"><div id="progressFill"></div></div><div class="row boardbuttons"><button id="next">החידה הבאה</button><button id="flip">סיבוב הלוח</button><button id="restart">נסה שוב</button></div><p class="muted" style="font-size:14px">בחר כלי ואז משבצת. המטרה היא למצוא את המהלך הראשון הטוב ביותר.</p></section><aside><div class="filters"><label>מסלול<select id="track"><option value="recommended">מותאם לי</option><option value="all">כל המאגר</option><option value="originalErrors">טעויות מהמשחקים המקוריים</option><option value="mistakes">חזרה על טעויות שלי בחידות</option><option value="unseen">חידות שטרם פתרתי</option><option value="opening">פתיחה והגנת המלך</option></select></label><label>נושא<select id="theme"><option value="all">כל הנושאים</option></select></label><label>קושי<select id="difficulty"><option value="adaptive">מותאם לפי התרגול שלי</option><option value="all">כל הרמות</option><option>קל</option><option>בינוני</option><option>מאתגר</option></select></label></div><p id="previousMove" aria-live="polite"></p><div id="feedback" class="feedback" aria-live="polite"></div><div class="row"><button id="hint">רמז</button><button id="reveal">פתרון</button></div><h2>התרגול שלך</h2><div class="stats"><div><b id="solvedCount">0</b>נפתרו</div><div><b id="cleanCount">0</b>ללא עזרה</div><div><b id="successRate">—</b>הצלחה בניסיון ראשון</div></div><p id="adaptiveNote" class="note muted"></p><section id="solution" hidden><h2>המהלך וההמשך</h2><p id="explanation"></p><p id="line"></p><div class="row"><button id="linePrev">קודם</button><button id="lineNext">המשך</button></div><p class="note muted">ההמשך הוא קו שהמנוע הציע, ולא תגובה יחידה שהיריב חייב לשחק.</p></section><p class="source" id="source"></p><details><summary>איך הותאם המאגר?</summary><p class="note">כל החידות הגיעו מעמדות שלך מול אנשים ב־Chess.com. הדגש הוא על פתיחה, בטיחות המלך ומהלכים טקטיים עם שח או הכאה. בחלק מהעמדות כבר מצאת את המהלך במשחק המקורי — זה תרגול לשימור מיומנות.</p><p class="note">הקושי הוא הערכה מקומית, לא דירוג Chess.com. התאמת הקושי מבוססת על הצלחות ללא רמזים; טעויות חוזרות מקבלות עדיפות. הנתונים נשמרים במכשיר ומסתנכרנים לאחר כניסה עם Google.</p><p class="note" id="verification"></p><p class="note"><a href="puzzles-data.json">הורדת המאגר</a> · <a href="https://github.com/nmrugg/stockfish.js">Stockfish 10</a> · כלים: Cburnett, CC BY-SA 3.0.</p></details></aside></main><script>'''
+</style>
+<header>
+<div>
+<h1>חידות מתוך המשחקים שלך</h1>
+<small id="total">
+</small>
+</div>
+<nav>
+<a href="chess.html">משחק</a> · <a href="insights.html">דוח שיפור</a>
+</nav>
+</header>
+<main>
+<section class="game">
+<div class="bar">
+<b id="turn">
+</b>
+<span class="chip" id="topic">
+</span>
+</div>
+<div id="board" aria-label="לוח חידת שחמט">
+</div>
+<div class="bar">
+<span id="number">
+</span>
+<span id="hardness">
+</span>
+</div>
+<div class="progress">
+<div id="progressFill">
+</div>
+</div>
+<div class="row boardbuttons">
+<button id="next">החידה הבאה</button>
+<button id="flip">סיבוב הלוח</button>
+<button id="restart">נסה שוב</button>
+</div>
+<p class="muted" style="font-size:14px">בחר כלי ואז משבצת. המטרה היא למצוא את המהלך הראשון הטוב ביותר.</p>
+</section>
+<aside>
+<div class="filters">
+<label>מסלול<select id="track">
+<option value="recommended">מותאם לי</option>
+<option value="all">כל המאגר</option>
+<option value="originalErrors">טעויות מהמשחקים המקוריים</option>
+<option value="mistakes">חזרה על טעויות שלי בחידות</option>
+<option value="unseen">חידות שטרם פתרתי</option>
+<option value="opening">פתיחה והגנת המלך</option>
+</select>
+</label>
+<label>נושא<select id="theme">
+<option value="all">כל הנושאים</option>
+</select>
+</label>
+<label>קושי<select id="difficulty">
+<option value="adaptive">מותאם לפי התרגול שלי</option>
+<option value="all">כל הרמות</option>
+<option>קל</option>
+<option>בינוני</option>
+<option>מאתגר</option>
+</select>
+</label>
+</div>
+<p id="previousMove" aria-live="polite">
+</p>
+<div id="feedback" class="feedback" aria-live="polite">
+</div>
+<div class="row">
+<button id="hint">רמז</button>
+<button id="reveal">פתרון</button>
+</div>
+<h2>התרגול שלך</h2>
+<div class="stats">
+<div>
+<b id="solvedCount">0</b>נפתרו</div>
+<div>
+<b id="cleanCount">0</b>ללא עזרה</div>
+<div>
+<b id="successRate">—</b>הצלחה בניסיון ראשון</div>
+</div>
+<p id="adaptiveNote" class="note muted">
+</p>
+<section id="solution" hidden>
+<h2>המהלך וההמשך</h2>
+<p id="explanation">
+</p>
+<p id="line">
+</p>
+<div class="row">
+<button id="linePrev">קודם</button>
+<button id="lineNext">המשך</button>
+</div>
+<p class="note muted">ההמשך הוא קו שהמנוע הציע, ולא תגובה יחידה שהיריב חייב לשחק.</p>
+</section>
+<section id="continuePanel" hidden>
+<h2>המשך מול מנוע</h2>
+<label for="engineRating">רמת היריב<select id="engineRating"><option value="0">800 · מתחיל</option><option value="3">1000 · מתחיל מתקדם</option><option value="5">1200 · מועדון</option><option value="9" selected>1500 · מועדון מתקדם</option><option value="14">1800 · חזק</option><option value="18">2000 · תחרותי</option></select></label>
+<button id="continueGame">המשך מהעמדה מול המנוע</button>
+<p id="continueStatus" aria-live="polite"></p>
+<p class="note muted">הדירוגים הם קירוב לרמת המנוע, לא דירוג FIDE רשמי.</p>
+</section>
+<p class="source" id="source">
+</p>
+<details>
+<summary>איך הותאם המאגר?</summary>
+<p class="note">כל החידות הגיעו מעמדות שלך מול אנשים ב־Chess.com. הדגש הוא על פתיחה, בטיחות המלך ומהלכים טקטיים עם שח או הכאה. בחלק מהעמדות כבר מצאת את המהלך במשחק המקורי — זה תרגול לשימור מיומנות.</p>
+<p class="note">הקושי הוא הערכה מקומית, לא דירוג Chess.com. התאמת הקושי מבוססת על הצלחות ללא רמזים; טעויות חוזרות מקבלות עדיפות. הנתונים נשמרים במכשיר ומסתנכרנים לאחר כניסה עם Google.</p>
+<p class="note" id="verification">
+</p>
+<p class="note">
+<a href="puzzles-data.json">הורדת המאגר</a> · <a href="https://github.com/nmrugg/stockfish.js">Stockfish 10</a> · כלים: Cburnett, CC BY-SA 3.0.</p>
+</details>
+</aside>
+</main>
+<script>'''
 js=r'''
-const puzzles=__DATA__,meta=__META__,names={p:'רגלי',n:'פרש',b:'רץ',r:'צריח',q:'מלכה',k:'מלך'},$=id=>document.getElementById(id);let progress={records:{},tier:0,streak:0};try{const saved=JSON.parse(localStorage.getItem('personal-puzzles-v1'));if(saved&&saved.records)progress=saved}catch{}let current=null,position=null,selected=null,flipped=false,finished=false,attempts=0,hints=0,viewStep=0,last=null,hintSquare=null,sessionSeen=new Set();
+const puzzles=__DATA__,meta=__META__,names={p:'רגלי',n:'פרש',b:'רץ',r:'צריח',q:'מלכה',k:'מלך'},$=id=>document.getElementById(id);let progress={records:{},tier:0,streak:0};try{const saved=JSON.parse(localStorage.getItem('personal-puzzles-v1'));if(saved&&saved.records)progress=saved}catch{}let current=null,position=null,selected=null,flipped=false,finished=false,attempts=0,hints=0,viewStep=0,last=null,hintSquare=null,sessionSeen=new Set(),continueMode=false,engineBusy=false,continuationEpoch=0,puzzleEngine=null,engineReady=null,humanColor=null;
 function save(){progress.updatedAt=Date.now();try{localStorage.setItem('personal-puzzles-v1',JSON.stringify(progress))}catch{}stats();window.chessSyncChanged?.()}
 function stats(){const records=Object.values(progress.records),solved=records.filter(x=>x.solved),attempted=records.filter(x=>x.attempted);$('solvedCount').textContent=solved.length;$('cleanCount').textContent=records.filter(x=>x.clean).length;$('successRate').textContent=attempted.length?Math.round(100*records.filter(x=>x.firstClean).length/attempted.length)+'%':'—';$('adaptiveNote').textContent='הרמה המותאמת כרגע: '+['קל','בינוני','מאתגר'][progress.tier]+'. שלוש הצלחות רצופות ללא עזרה מעלות קושי. שתי חידות עם טעויות מורידות קושי.';$('progressFill').style.width=(100*solved.length/puzzles.length)+'%'}
 function renderBoard(){const board=$('board');board.innerHTML='';const legal=!finished&&selected?position.moves({square:selected,verbose:true}):[];const ranks=flipped?[1,2,3,4,5,6,7,8]:[8,7,6,5,4,3,2,1],files=flipped?'hgfedcba':'abcdefgh';for(const [ri,r]of ranks.entries())for(const [fi,f]of [...files].entries()){const sq=f+r,p=position.get(sq),b=document.createElement('button');b.className=((r+'abcdefgh'.indexOf(f))%2?'light':'dark')+(selected===sq?' selected':'')+(hintSquare===sq?' hint-piece':'')+(last&&(last.from===sq||last.to===sq)?' last':'')+(legal.some(m=>m.to===sq)?' possible':'');b.setAttribute('aria-label',sq+(p?' '+names[p.type]+' '+(p.color==='w'?'לבן':'שחור'):'')+(hintSquare===sq?' · הכלי המסומן ברמז':''));if(p){const img=document.createElement('img');img.src='pieces/'+p.color+p.type.toUpperCase()+'.svg';img.alt='';b.append(img)}if(fi===0){const span=document.createElement('span');span.className='coord rank';span.textContent=r;b.append(span)}if(ri===7){const span=document.createElement('span');span.className='coord file';span.textContent=f;b.append(span)}b.onclick=()=>play(sq);board.append(b)}}
 function feedback(text,error=false){$('feedback').textContent=text;$('feedback').className='feedback'+(error?' error':'')}
+function uciMove(uci){return {from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]||'q'}}
+function ratingLabel(){return $('engineRating').selectedOptions[0].textContent.split(' · ')[0]}
+function engineTime(){return [180,240,340,560,950,1500][['0','3','5','9','14','18'].indexOf($('engineRating').value)]||560}
+function bootPuzzleEngine(){if(engineReady)return engineReady;engineReady=new Promise((resolve,reject)=>{try{puzzleEngine=new Worker('stockfish-puzzle-engine.js');const timeout=setTimeout(()=>reject(new Error('timeout')),15000);puzzleEngine.onmessage=e=>{const line=String(e.data);if(line==='uciok'){clearTimeout(timeout);puzzleEngine.postMessage('setoption name Hash value 16');resolve()}else if(line.startsWith('bestmove ')){const move=line.split(/\s+/)[1];const pending=puzzleEngine.pending;puzzleEngine.pending=null;pending?.resolve(move)}};puzzleEngine.onerror=()=>reject(new Error('worker'));puzzleEngine.postMessage('uci')}catch{reject(new Error('worker'))}});return engineReady}
+async function engineMove(){await bootPuzzleEngine();return new Promise((resolve,reject)=>{const timeout=setTimeout(()=>{if(puzzleEngine.pending){puzzleEngine.pending=null;reject(new Error('timeout'))}},20000);puzzleEngine.pending={resolve:move=>{clearTimeout(timeout);resolve(move)}};puzzleEngine.postMessage('setoption name Skill Level value '+$('engineRating').value);puzzleEngine.postMessage('position fen '+position.fen());puzzleEngine.postMessage('go movetime '+engineTime())})}
+function gameOverText(){if(position.isCheckmate())return position.turn()==='w'?'שח־מט: השחור ניצח.':'שח־מט: הלבן ניצח.';if(position.isDraw())return 'המשחק הסתיים בתיקו.';return ''}
+async function replyWithEngine(epoch){if(!continueMode||epoch!==continuationEpoch||position.isGameOver())return;engineBusy=true;$('continueStatus').textContent='המנוע חושב…';try{const move=await engineMove();if(!continueMode||epoch!==continuationEpoch)return;if(!move||move==='(none)')throw new Error('no move');last=position.move(uciMove(move));selected=null;renderBoard();const over=gameOverText();$('continueStatus').textContent=over||'תורך לשחק.';feedback(over||'המנוע שיחק. תורך.')}catch{$('continueStatus').textContent='לא הצלחתי להפעיל את המנוע. רענן את הדף ונסה שוב.';feedback('המנוע לא זמין כרגע.',true)}finally{engineBusy=false}}
+function startContinuation(){if(!current)return;continuationEpoch++;continueMode=true;engineBusy=false;finished=false;humanColor=current.color;position=new Chess(current.fen);last=position.move(uciMove(current.solution));selected=null;hintSquare=null;$('solution').hidden=true;$('hint').disabled=true;$('reveal').disabled=true;$('continuePanel').hidden=false;$('continueStatus').textContent='אתה משחק '+(humanColor==='w'?'בלבן':'בשחור')+' מול מנוע ברמת '+ratingLabel()+'.';feedback('אפשר להמשיך מהעמדה לאחר הפתרון.');renderBoard();if(position.turn()!==humanColor)replyWithEngine(continuationEpoch)}
+function continuePlay(sq){if(engineBusy||position.isGameOver()||position.turn()!==humanColor)return;const piece=position.get(sq);if(piece&&piece.color===humanColor){selected=sq;renderBoard();return}if(!selected)return;try{last=position.move({from:selected,to:sq,promotion:'q'});selected=null;renderBoard()}catch{selected=null;feedback('המהלך אינו חוקי. בחר כלי ומשבצת מחדש.',true);renderBoard();return}const over=gameOverText();if(over){$('continueStatus').textContent=over;feedback(over);return}$('continueStatus').textContent='המנוע חושב…';replyWithEngine(continuationEpoch)}
 function filtered(){return puzzles.filter(p=>($('theme').value==='all'||p.theme===$('theme').value)&&($('difficulty').value==='all'||$('difficulty').value==='adaptive'||p.difficulty===$('difficulty').value)&&($('track').value!=='mistakes'||(progress.records[p.id]?.wrong||0)>0)&&($('track').value!=='unseen'||!progress.records[p.id]?.solved)&&($('track').value!=='opening'||p.opening)&&($('track').value!=='originalErrors'||!p.originalCorrect))}
 function next(){const pool=filtered();if(!pool.length){feedback('אין חידות במסננים האלה. בחר נושא או מסלול אחר.');return}let desired=['קל','בינוני','מאתגר'][progress.tier],eligible=$('difficulty').value==='adaptive'?pool.filter(p=>p.difficulty===desired):pool;if(!eligible.length)eligible=pool;let fresh=eligible.filter(p=>!sessionSeen.has(p.id));if(fresh.length)eligible=fresh;const rated=eligible.map(p=>{const r=progress.records[p.id]||{};return {p,score:Math.random()*2+(r.wrong&&!r.clean?4:0)+(!r.solved?2:0)+($('track').value==='recommended'&&(p.opening||p.theme.includes('מט'))?2:0)+($('track').value==='recommended'&&!p.originalCorrect?5:0)}}).sort((a,b)=>b.score-a.score);current=rated[0].p;sessionSeen.add(current.id);start()}
-function start(){position=new Chess(current.fen);selected=null;flipped=current.color==='b';finished=false;attempts=0;hints=0;viewStep=0;last=current.previousMove||null;hintSquare=null;$('previousMove').textContent=current.previousMove?'לפני החידה, היריב שיחק: '+names[current.previousMove.piece]+' מ־'+current.previousMove.from+' ל־'+current.previousMove.to+' ('+current.previousMove.san+').':'אין מידע על המהלך האחרון.';$('solution').hidden=true;$('hint').disabled=false;$('reveal').disabled=false;$('turn').textContent=(current.color==='w'?'לבן':'שחור')+' משחק';$('topic').textContent=current.theme;$('hardness').textContent=current.difficulty;$('number').textContent='חידה '+current.id.slice(1)+' / '+puzzles.length;$('source').textContent=current.date+' · מול '+current.opponent+' · מסע '+current.move;feedback(current.theme==='מט במסע אחד'?'מצא מט במסע אחד.':position.isCheck()?'המלך שלך בשח. מצא את התגובה הטובה ביותר.':'מצא את המהלך הטקטי הטוב ביותר. בדוק שח והכאות לפני שתבחר.');renderBoard();stats()}
+function start(){continuationEpoch++;continueMode=false;engineBusy=false;position=new Chess(current.fen);selected=null;flipped=current.color==='b';finished=false;attempts=0;hints=0;viewStep=0;last=current.previousMove||null;hintSquare=null;$('previousMove').textContent=current.previousMove?'לפני החידה, היריב שיחק: '+names[current.previousMove.piece]+' מ־'+current.previousMove.from+' ל־'+current.previousMove.to+' ('+current.previousMove.san+').':'אין מידע על המהלך האחרון.';$('solution').hidden=true;$('continuePanel').hidden=true;$('continueStatus').textContent='';$('hint').disabled=false;$('reveal').disabled=false;$('turn').textContent=(current.color==='w'?'לבן':'שחור')+' משחק';$('topic').textContent=current.theme;$('hardness').textContent=current.difficulty;$('number').textContent='חידה '+current.id.slice(1)+' / '+puzzles.length;$('source').textContent=current.date+' · מול '+current.opponent+' · מסע '+current.move;feedback(current.theme==='מט במסע אחד'?'מצא מט במסע אחד.':position.isCheck()?'המלך שלך בשח. מצא את התגובה הטובה ביותר.':'מצא את המהלך הטקטי הטוב ביותר. בדוק שח והכאות לפני שתבחר.');renderBoard();stats()}
 function recordResult(clean){const r=progress.records[current.id]??={};r.attempted=true;r.solved=true;if(r.firstClean===undefined)r.firstClean=clean;r.clean=!!r.clean||clean;r.lastSolved=Date.now();if(clean){progress.streak++;progress.errorStreak=0;if(progress.streak>=3){progress.tier=Math.min(2,progress.tier+1);progress.streak=0}}else{progress.streak=0;progress.errorStreak=(progress.errorStreak||0)+1;if(progress.errorStreak>=2){progress.tier=Math.max(0,progress.tier-1);progress.errorStreak=0}}save()}
-function play(sq){if(finished)return;const piece=position.get(sq);if(piece&&piece.color===position.turn()){selected=sq;renderBoard();return}if(!selected)return;let m;try{m=position.move({from:selected,to:sq,promotion:'q'})}catch{selected=null;feedback('המהלך אינו חוקי. בחר כלי ומשבצת מחדש.',true);renderBoard();return}attempts++;const accepted=current.acceptSans.includes(m.san);if(accepted){finished=true;last=m;hintSquare=null;selected=null;recordResult(attempts===1&&hints===0);feedback(hints?'נכון! עכשיו חזור על העמדה ללא רמז.':'נכון! מצאת את המהלך.');showSolution();renderBoard()}else{position.undo();selected=null;const r=progress.records[current.id]??={};r.wrong=(r.wrong||0)+1;r.attempted=true;if(r.firstClean===undefined)r.firstClean=false;save();feedback('זה מהלך חוקי, אבל יש מהלך טוב יותר לפי הניתוח. בדוק שוב שח, הכאות ואיומים.',true);renderBoard()}}
-function showSolution(){const p=current;$('solution').hidden=false;$('hint').disabled=true;$('reveal').disabled=true;$('line').textContent=p.line.join(' → ');$('explanation').textContent='המהלך המומלץ: '+p.san+'. '+(p.theme==='מט במסע אחד'?'המלך בשח ואין ליריב מהלך חוקי שמוציא אותו מהשח.':p.mate?'המנוע מצא מסלול למט במשחק מיטבי. בחן את תגובות היריב בהמשך.':p.captured?'המהלך מכה '+names[p.captured]+'. ההמשך מדגים למה ההכאה עדיפה על החלופות שנבדקו.':'השח מחייב את היריב להגיב. בדוק מה משתנה אחרי התגובה המוצעת.')+' במשחק המקורי שיחקת '+p.played+(p.originalCorrect?' — כבר מצאת אז את ההמלצה.':'.');viewStep=1;updateLineButtons()}
+function play(sq){if(continueMode)return continuePlay(sq);if(finished)return;const piece=position.get(sq);if(piece&&piece.color===position.turn()){selected=sq;renderBoard();return}if(!selected)return;let m;try{m=position.move({from:selected,to:sq,promotion:'q'})}catch{selected=null;feedback('המהלך אינו חוקי. בחר כלי ומשבצת מחדש.',true);renderBoard();return}attempts++;const accepted=current.acceptSans.includes(m.san);if(accepted){finished=true;last=m;hintSquare=null;selected=null;recordResult(attempts===1&&hints===0);feedback(hints?'נכון! עכשיו חזור על העמדה ללא רמז.':'נכון! מצאת את המהלך.');showSolution();renderBoard()}else{position.undo();selected=null;const r=progress.records[current.id]??={};r.wrong=(r.wrong||0)+1;r.attempted=true;if(r.firstClean===undefined)r.firstClean=false;save();feedback('זה מהלך חוקי, אבל יש מהלך טוב יותר לפי הניתוח. בדוק שוב שח, הכאות ואיומים.',true);renderBoard()}}
+function showSolution(){const p=current;$('solution').hidden=false;$('continuePanel').hidden=false;$('hint').disabled=true;$('reveal').disabled=true;$('line').textContent=p.line.join(' → ');$('explanation').textContent='המהלך המומלץ: '+p.san+'. '+(p.theme==='מט במסע אחד'?'המלך בשח ואין ליריב מהלך חוקי שמוציא אותו מהשח.':p.mate?'המנוע מצא מסלול למט במשחק מיטבי. בחן את תגובות היריב בהמשך.':p.captured?'המהלך מכה '+names[p.captured]+'. ההמשך מדגים למה ההכאה עדיפה על החלופות שנבדקו.':'השח מחייב את היריב להגיב. בדוק מה משתנה אחרי התגובה המוצעת.')+' במשחק המקורי שיחקת '+p.played+(p.originalCorrect?' — כבר מצאת אז את ההמלצה.':'.');viewStep=1;updateLineButtons()}
 function updateLineButtons(){$('linePrev').disabled=viewStep===0;$('lineNext').disabled=viewStep>=current.line.length}
 function viewLine(step){viewStep=Math.max(0,Math.min(current.line.length,step));position=new Chess(current.fen);last=current.previousMove||null;hintSquare=null;for(const san of current.line.slice(0,viewStep))last=position.move(san);selected=null;renderBoard();updateLineButtons()}
 $('hint').onclick=()=>{if(!current||finished)return;hints++;const origin=current.solution.slice(0,2),dest=current.solution.slice(2,4);hintSquare=origin;selected=null;renderBoard();feedback(hints===1?'סימנתי במסגרת כתומה את ה'+names[current.piece]+' שבמשבצת '+origin+'. מצא לאן כדאי להזיז אותו.':hints===2?(current.theme.includes('מט')?'הכלי המסומן יכול לתת שח. בדוק כיצד לחסום את בריחת המלך.':current.captured?'בדוק מה הכלי המסומן יכול להכות ומה תהיה תגובת היריב.':'בדוק אילו שחים הכלי המסומן יכול לתת ומה הם מאיימים.'): 'נסה להעביר את הכלי מ־'+origin+' ל־'+dest+'.')};
-$('reveal').onclick=()=>{if(!current||finished)return;finished=true;hintSquare=null;hints++;const r=progress.records[current.id]??={};r.revealed=(r.revealed||0)+1;r.wrong=(r.wrong||0)+1;r.attempted=true;if(r.firstClean===undefined)r.firstClean=false;progress.streak=0;progress.errorStreak=(progress.errorStreak||0)+1;if(progress.errorStreak>=2){progress.tier=Math.max(0,progress.tier-1);progress.errorStreak=0}save();showSolution();viewLine(1);feedback('הפתרון מוצג. חזור על החידה מאוחר יותר כדי לתרגל בעצמך.')};$('restart').onclick=()=>{if(current)start()};$('flip').onclick=()=>{flipped=!flipped;renderBoard()};$('next').onclick=next;$('linePrev').onclick=()=>viewLine(viewStep-1);$('lineNext').onclick=()=>viewLine(viewStep+1);for(const id of ['track','theme','difficulty'])$(id).onchange=next;for(const theme of [...new Set(puzzles.map(p=>p.theme))]){const o=document.createElement('option');o.value=theme;o.textContent=theme;$('theme').append(o)}$('total').textContent=puzzles.length+' חידות אישיות · סנכרון עם Google · ללא מנוי';$('verification').textContent='כל עמדה נבדקה בשני חיפושי מנוע, עם עומק אימות של לפחות 9. לחידות שאינן מט מיידי נדרש יתרון של לפחות 1.3 רגלים על החלופה השנייה. כל המהלכים והקווים נבדקו כחוקיים. אימות זה מוגבל לעומק החיפוש ואינו הוכחה מתמטית למהלך יחיד. במט מיידי מתקבלים כל מהלכי המט החוקיים.';window.chessApplyPuzzles=p=>{progress=p;stats()};next();
+$('reveal').onclick=()=>{if(!current||finished)return;finished=true;hintSquare=null;hints++;const r=progress.records[current.id]??={};r.revealed=(r.revealed||0)+1;r.wrong=(r.wrong||0)+1;r.attempted=true;if(r.firstClean===undefined)r.firstClean=false;progress.streak=0;progress.errorStreak=(progress.errorStreak||0)+1;if(progress.errorStreak>=2){progress.tier=Math.max(0,progress.tier-1);progress.errorStreak=0}save();showSolution();viewLine(1);feedback('הפתרון מוצג. חזור על החידה מאוחר יותר כדי לתרגל בעצמך.')};$('restart').onclick=()=>{if(current)start()};$('flip').onclick=()=>{flipped=!flipped;renderBoard()};$('next').onclick=next;$('linePrev').onclick=()=>viewLine(viewStep-1);$('lineNext').onclick=()=>viewLine(viewStep+1);$('continueGame').onclick=startContinuation;for(const id of ['track','theme','difficulty'])$(id).onchange=next;for(const theme of [...new Set(puzzles.map(p=>p.theme))]){const o=document.createElement('option');o.value=theme;o.textContent=theme;$('theme').append(o)}$('total').textContent=puzzles.length+' חידות אישיות · סנכרון עם Google · ללא מנוי';$('verification').textContent='כל עמדה נבדקה בשני חיפושי מנוע, עם עומק אימות של לפחות 9. לחידות שאינן מט מיידי נדרש יתרון של לפחות 1.3 רגלים על החלופה השנייה. כל המהלכים והקווים נבדקו כחוקיים. אימות זה מוגבל לעומק החיפוש ואינו הוכחה מתמטית למהלך יחיד. במט מיידי מתקבלים כל מהלכי המט החוקיים.';window.chessApplyPuzzles=p=>{progress=p;stats()};next();
 '''
 Path('puzzles.html').write_text(html+engine+js.replace('__DATA__',json.dumps(puzzles,ensure_ascii=False)).replace('__META__',json.dumps(meta))+'''</script><script>
 (()=>{
