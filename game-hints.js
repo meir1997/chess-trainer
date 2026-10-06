@@ -11,7 +11,7 @@
   const normalRender=render;
   render=()=>{
     normalRender();
-    const unavailable=hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&(game.turn()!==playerColor||playBusy));
+    const unavailable=hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor);
     hintButton.disabled=unavailable;
     if(!hintMove)return;
     const from=hintMove.slice(0,2),to=hintMove.slice(2,4);
@@ -38,7 +38,7 @@
   }
 
   hintButton.onclick=async()=>{
-    if(hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&(game.turn()!==playerColor||playBusy)))return;
+    if(hintBusy||reviewBusy||game.isGameOver()||(mode.value==='computer'&&game.turn()!==playerColor))return;
     if(hintMove&&hintStep===1){hintStep=2;render();document.getElementById('status').textContent='רמז מלא: הכלי והמשבצת המסומנים יוצרים את המהלך המומלץ.';return}
     hintBusy=true;render();document.getElementById('status').textContent='Stockfish מחשב את המהלך הטוב ביותר…';let message='';
     try{
