@@ -5,6 +5,14 @@
  login.textContent='כניסה עם Google';restore.textContent='טעינת המשחק מהענן';restore.hidden=true;
  for(const button of [login,restore])button.style.cssText='background:#58753d;color:white;border:0;border-radius:7px;padding:8px 12px;cursor:pointer;min-height:36px';
  status.setAttribute('aria-live','polite');bar.append(login,status,restore);const header=document.querySelector('header');if(header)header.after(bar);else if(document.querySelector('aside')){document.querySelector('aside').prepend(bar);bar.style.padding='0';bar.style.marginBottom='16px'}else (document.querySelector('main')||document.body).prepend(bar);
+ // Google OAuth requires a hosted web origin; local files keep local progress.
+ if(location.protocol==='file:'){
+  const page=location.pathname.split('/').pop();
+  const hosted='https://meir1997.github.io/chess-trainer/'+(['puzzles.html','chess.html','insights.html'].includes(page)?page:'index.html');
+  status.textContent='זהו קובץ מקומי. כדי להתחבר ולסנכרן, פתח את האתר המקוון.';
+  login.textContent='פתח את האתר והתחבר';login.onclick=()=>location.assign(hosted);
+  return;
+ }
  let auth,db,ref,stop,timer,cloud={},ready=false,applying=false,dirty=false,session=0,revision=0;
  const key='personal-puzzles-v1',gameKey='chess-cloud-game-v1';
  function read(k,fallback={}){try{return JSON.parse(localStorage.getItem(k))||fallback}catch{return fallback}}

@@ -54,4 +54,4 @@ Path('puzzles.html').write_text(html+engine+js.replace('__DATA__',json.dumps(puz
  new ResizeObserver(fit).observe(page);new MutationObserver(fit).observe(page,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden']});
  window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);fit();
 })();
-</script><script src="sync-core.js?v=2"></script><script src="sync.js?v=2"></script></html>''')
+</script><script src="sync-core.js?v=2"></script><script src="sync.js?v=3"></script></html>''')
