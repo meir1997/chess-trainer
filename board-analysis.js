@@ -10,7 +10,7 @@
   const displayed=()=>reviewPosition||game,uci=s=>({from:s.slice(0,2),to:s.slice(2,4),promotion:s[4]||'q'});
   function svgEl(name,attrs){const e=document.createElementNS(ns,name);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);return e}
   function arrows(){ $('analysisOverlay')?.remove();$('analysisBadge')?.remove();const training=!$('trainingReview').hidden;if(!active&&!training)return;
-    const row=reviewRows.find(r=>r.before===displayed().fen());
+    const row=training?(reviewRows[reviewIndex]?.before===displayed().fen()?reviewRows[reviewIndex]:null):reviewRows.find(r=>r.before===displayed().fen());
     if(row&&$('analysisIcons').checked){const m=new Chess(row.before).move(row.san),cell=board.querySelector(`[aria-label^="${m.to}"]`);if(cell){const badge=document.createElement('span');badge.id='analysisBadge';badge.textContent=row.loss>=200?'??':row.loss>=100?'?':row.loss>=50?'?!':row.label==='המהלך המומלץ'?'★':'✓';badge.title=row.label;cell.append(badge)}}
     const actual=row?new Chess(row.before).move(row.san):null;const data=training&&row?{lines:[{pv:[row.best]},...(actual&&row.best!==actual.from+actual.to+(actual.promotion||'')?[{pv:[actual.from+actual.to+(actual.promotion||'')]}]:[])]}:result;if(!training&&($('analysisArrows').value==='off'||resultFen!==displayed().fen()))return;if(training&&!row)return;
     const svg=svgEl('svg',{id:'analysisOverlay',viewBox:'0 0 800 800','aria-label':'חיצי ניתוח'}),defs=svgEl('defs',{});svg.append(defs);
