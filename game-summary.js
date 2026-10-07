@@ -6,7 +6,7 @@
   document.body.append(panel);panel.querySelector('button').onclick=()=>panel.hidden=true;
   async function summarize(moves,color,key){
     const token=++epoch;panel.hidden=false;const text=panel.querySelector('p');
-    const worker=new Worker('stockfish-puzzle-engine.js');let pending=null;
+    const worker=new Worker('engines/stockfish-19-lite-single.js');let pending=null;
     worker.onmessage=e=>{const line=String(e.data);if(line==='uciok'&&pending){pending.resolve();pending=null}else if(pending){const match=line.match(/score (cp|mate) (-?\d+)/);if(match&&!/upperbound|lowerbound/.test(line))pending.score=match[1]==='cp'?+match[2]:Math.sign(+match[2])*100000;if(line.startsWith('bestmove ')){const p=pending;pending=null;p.resolve({score:p.score||0,best:line.split(' ')[1]})}}};
     function command(fen){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('timeout')),20000);pending={resolve:v=>{clearTimeout(timer);resolve(v)},score:0};if(fen){worker.postMessage('position fen '+fen);worker.postMessage('go depth 12')}else worker.postMessage('uci')})}
     try{
