@@ -6,11 +6,9 @@
   document.body.append(panel);panel.querySelector('button').onclick=()=>panel.hidden=true;
   async function summarize(moves,color,key){
     const token=++epoch;panel.hidden=false;const text=panel.querySelector('p');
-    const worker=new Worker('engines/stockfish-19-lite-single.js');let pending=null;
-    worker.onmessage=e=>{const line=String(e.data);if(line==='uciok'&&pending){pending.resolve();pending=null}else if(pending){const match=line.match(/score (cp|mate) (-?\d+)/);if(match&&!/upperbound|lowerbound/.test(line))pending.score=match[1]==='cp'?+match[2]:Math.sign(+match[2])*100000;if(line.startsWith('bestmove ')){const p=pending;pending=null;p.resolve({score:p.score||0,best:line.split(' ')[1]})}}};
-    function command(fen){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('timeout')),20000);pending={resolve:v=>{clearTimeout(timer);resolve(v)},score:0};if(fen){worker.postMessage('position fen '+fen);worker.postMessage('go depth 12')}else worker.postMessage('uci')})}
+    const command=fen=>ChessAnalysis.search(fen,{time:250});
     try{
-      text.textContent='מנתח את המהלכים שלך…';await command();worker.postMessage('setoption name Skill Level value 20');const cache=new Map(),counts={good:0,inaccuracy:0,mistake:0,blunder:0};
+      text.textContent='מנתח את המהלכים שלך…';const cache=new Map(),counts={good:0,inaccuracy:0,mistake:0,blunder:0};
       const score=async fen=>{if(!cache.has(fen))cache.set(fen,await command(fen));return cache.get(fen)};
       const own=moves.filter(m=>m.color===color);
       for(let i=0;i<own.length;i++){
@@ -19,7 +17,7 @@
         const best=before.best===m.from+m.to+(m.promotion||'');const loss=best?0:Math.max(0,before.score+after.score);counts[loss>=200?'blunder':loss>=100?'mistake':loss>=50?'inaccuracy':'good']++;
       }
       if(token===epoch&&game.pgn()===key)text.textContent=`מתוך ${own.length} מהלכים: ${counts.good} טובים או מצוינים, ${counts.inaccuracy} אי־דיוקים, ${counts.mistake} שגיאות ו־${counts.blunder} שגיאות חמורות.`;
-    }catch{if(token===epoch)text.textContent='הסיכום לא הושלם. ניתן לנסות דרך ניתוח המשחק.'}finally{worker.terminate()}
+    }catch{if(token===epoch)text.textContent='הסיכום לא הושלם. ניתן לנסות דרך ניתוח המשחק.'}
   }
   function check(){if(!game.isGameOver()){if(lastKey!==null){lastKey=null;epoch++;panel.hidden=true}return}const key=game.pgn();if(key===lastKey)return;lastKey=key;summarize(game.history({verbose:true}),playerColor,key)}
   new MutationObserver(check).observe(board,{childList:true});check();
