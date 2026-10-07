@@ -17,7 +17,7 @@
     const xy=s=>{let x='abcdefgh'.indexOf(s[0]),y=8-+s[1];if(flipped){x=7-x;y=7-y}return [x*100+50,y*100+50]};let n=0;
     function arrow(from,to){if(from===to||n>=2)return;const color='#edbf42',id='analysisArrow'+n++,marker=svgEl('marker',{id,viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:3,markerHeight:3,orient:'auto'});marker.append(svgEl('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:color}));defs.append(marker);const a=xy(from),b=xy(to),dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);svg.append(svgEl('line',{x1:a[0],y1:a[1],x2:b[0]-dx/length*19,y2:b[1]-dy/length*19,stroke:color,'stroke-width':12,opacity:.8,'marker-end':`url(#${id})`}))}
     const type=training?'best':$('analysisArrows').value;
-    if(type==='best'||type==='both'){const lines=data?.lines||[],chosen=lines[training?0:choice];[chosen,...lines.filter((_,i)=>i!==choice)].filter(Boolean).slice(0,type==='both'?1:2).forEach(line=>{const move=line.pv[0];if(move)arrow(move.slice(0,2),move.slice(2,4))})}
+    if(type==='best'||type==='both'){const lines=data?.lines||[],lineIndex=training?0:choice,chosen=lines[lineIndex];[chosen,...lines.filter((_,i)=>i!==lineIndex)].filter(Boolean).slice(0,type==='both'?1:2).forEach(line=>{const move=line.pv[0];if(move)arrow(move.slice(0,2),move.slice(2,4))})}
     if(type==='threat'||type==='both'){const pos=new Chess(displayed().fen());if(type==='both'&&result?.lines?.[choice]?.pv[0])try{pos.move(uci(result.lines[choice].pv[0]))}catch{}pos.moves({verbose:true}).filter(m=>m.captured).slice(0,type==='both'?1:2).forEach(m=>arrow(m.from,m.to))}
     board.append(svg);
   }
